@@ -7,11 +7,11 @@ It will receive two arguments -- the current state and the event.
 The current state will be nil if no events have bee processed yet.
 The reducer function must return the new state.
 
-## Exmple usage
+## Example usage
 
 ```[ruby]
 require 'rack/cors'
-require_relative './lib/es_readmodel'
+require 'es_readmodel'
 require_relative './active_users'
 require_relative './list_users'
 require_relative './get_user_details'
