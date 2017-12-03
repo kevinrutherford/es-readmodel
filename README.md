@@ -7,6 +7,11 @@ It will receive two arguments -- the current state and the event.
 The current state will be nil if no events have bee processed yet.
 The reducer function must return the new state.
 
+## Routes
+
+At the moment every route handler must return a Hash.
+(If you don't, the Api module will crash!)
+
 ## Example usage
 
 ```[ruby]
