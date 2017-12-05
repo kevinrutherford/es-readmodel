@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = 'es-readmodel'
-  spec.version       = '0.0.1'
+  spec.version       = '0.0.2'
   spec.licenses      = ['MIT']
   spec.authors       = ['Kevin Rutherford']
   spec.email         = ['kevin@rutherford-software.com']

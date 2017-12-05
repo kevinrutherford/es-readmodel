@@ -76,10 +76,26 @@ module EsReadModel
         @status[:available] = true
         @stream.wait_for_new_events
         @status[:available] = false
+        num_events_processed = 0
         @stream.each_event do |evt|
-          @state = @reducer.call(@state, evt)
+          begin
+            @state = @reducer.call(@state, evt)
+          rescue Exception => ex
+            @listener.call({
+              level: 'error',
+              tag:   'reducer.error',
+              msg:   "Error in reducer: #{ex.class}: #{ex.message}. Read model state not updated."
+            })
+          end
           @status[:eventsReceived] = @status[:eventsReceived] + 1
+          num_events_processed += 1
         end
+        @listener.call({
+          level: 'info',
+          tag:   'subscription.caughtUp',
+          msg:   "Subscription to $all caught up",
+          eventsProcessed: num_events_processed
+        })
       end
     end
 

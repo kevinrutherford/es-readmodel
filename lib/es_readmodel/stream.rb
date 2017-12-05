@@ -12,11 +12,6 @@ module EsReadModel
       @connection = connection
       @listener = listener
       @current_etag = nil
-      @listener.call({
-        level: 'info',
-        tag:   'connecting',
-        msg:   "Connecting to #{head_uri} on #{connection}"
-      })
       fetch_first_page(head_uri)
     end
 
@@ -38,16 +33,27 @@ module EsReadModel
 
     def fetch_first_page(uri)
       back_off = 1
+      @listener.call({
+        level: 'info',
+        tag:   'fetchFirstPage.connecting',
+        msg:   "Connecting to #{head_uri} on #{connection}"
+      })
       loop do
         begin
           fetch(uri)
           last = @current_page.first_event_uri
           fetch(last) if last
+          @listener.call({
+            level: 'info',
+            tag:   'fetchFirstPage.connected',
+            msg:   "Connected to #{head_uri} on #{connection}",
+            eventsWaiting: !@current_page.empty?
+          })
           return
         rescue Exception => ex
           @listener.call({
             level: 'error',
-            tag:   'connection.error',
+            tag:   'fetchFirstPage.error',
             msg:   "#{ex.class}: #{ex.message}. Retry in #{back_off}s."
           })
           sleep back_off
