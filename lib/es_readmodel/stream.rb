@@ -36,7 +36,7 @@ module EsReadModel
       @listener.call({
         level: 'info',
         tag:   'fetchFirstPage.connecting',
-        msg:   "Connecting to #{head_uri} on #{connection}"
+        msg:   "Connecting to #{uri} on #{@connection}"
       })
       loop do
         begin
@@ -46,7 +46,7 @@ module EsReadModel
           @listener.call({
             level: 'info',
             tag:   'fetchFirstPage.connected',
-            msg:   "Connected to #{head_uri} on #{connection}",
+            msg:   "Connected to #{uri} on #{@connection}",
             eventsWaiting: !@current_page.empty?
           })
           return
