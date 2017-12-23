@@ -1,3 +1,4 @@
+require 'rack'
 require 'json'
 require 'mustermann'
 
@@ -13,18 +14,26 @@ module EsReadModel
       @request = Rack::Request.new(env)
       path = @request.path_info
       @routes.each do |route, handler|
-        pattern = Mustermann.new(route)
-        args = pattern.params(path)
-        if args
-          return json_response(503, {status: env['readmodel.status']}) unless env['readmodel.available'] == true
-          result = handler.call(@request.env['readmodel.state'], @request.params.merge(args))
-          return result ? json_response(200, result) : json_response(404, {error: 'not found'})
-        end
+        args = Mustermann.new(route).params(path)
+        return invoke_handler(handler, args, env) if args
       end
-      return json_response(404, {error: 'not found'})
+      return json_response(404, {error: 'path did not match any route'})
     end
 
     private
+
+    def invoke_handler(handler, args, env)
+      return json_response(503, {status: env['readmodel.status']}) unless env['readmodel.available'] == true
+      begin
+        result = handler.call(@request.env['readmodel.state'], @request.params.merge(args))
+        return result ? json_response(200, result) : json_response(404, {error: 'not found in read model'})
+      rescue Exception => ex
+        return json_response(500, {
+          error: "#{ex.class.name}: #{ex.message}",
+          backtrace: ex.backtrace
+        })
+      end
+    end
 
     def json_response(status_code, body)
       result = body.merge({
