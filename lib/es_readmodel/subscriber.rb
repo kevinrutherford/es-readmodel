@@ -12,6 +12,7 @@ module EsReadModel
     def initialize(app, options)
       @app = app
       @listener = options[:listener]
+      @initial_state = options[:initial]
       url = "http://#{options[:es_host]}:#{options[:es_port]}"
       @status = {
         available: false,
@@ -54,7 +55,7 @@ module EsReadModel
         begin
           @status[:available] = false
           @status[:eventStore][:connected] = false
-          @state = nil
+          @state = @initial_state
           @stream = Stream.open("$all", @connection, @listener)
           @status[:eventStore][:connected] = true
           @status[:eventStore][:lastConnect] = Time.now
