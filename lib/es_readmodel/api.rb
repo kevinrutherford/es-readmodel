@@ -4,6 +4,9 @@ require 'mustermann'
 
 module EsReadModel
 
+  class ApiError < StandardError
+  end
+
   class Api
 
     def initialize(routes)
@@ -27,6 +30,10 @@ module EsReadModel
       begin
         result = handler.call(@request.env['readmodel.state'], @request.params.merge(args))
         return result ? json_response(200, result) : json_response(404, {error: 'not found in read model'})
+      rescue ApiError => ex
+        return json_response(400, {
+          error: ex.message
+        })
       rescue Exception => ex
         return json_response(500, {
           error: "#{ex.class.name}: #{ex.message}",

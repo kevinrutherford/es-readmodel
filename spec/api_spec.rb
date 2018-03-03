@@ -24,6 +24,20 @@ describe EsReadModel::Api do
     end
   end
 
+  context 'when the route handler throws an API error' do
+    let(:routes) { {
+      '/users' => Proc.new {|state, params| raise EsReadModel::ApiError, "boom!" }
+    } }
+
+    it 'returns a 400 error' do
+      expect(response[0]).to eq(400)
+    end
+
+    it 'includes the error message' do
+      expect(response[2][0]).to include('boom!')
+    end
+  end
+
   context 'when the route handler throws an exception' do
     let(:routes) { {
       '/users' => Proc.new {|state, params| raise ArgumentError, "boom!" }
