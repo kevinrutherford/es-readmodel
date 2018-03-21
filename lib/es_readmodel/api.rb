@@ -29,6 +29,9 @@ module EsReadModel
       return json_response(503, {status: env['readmodel.status']}) unless env['readmodel.available'] == true
       params = @request.params.merge(args)
       begin
+        payload = @request.body.read
+        body = payload.empty? ? {} : JSON.parse(payload, symbolize_names: true)
+        params = params.merge(body)
         result = handler.call(@request.env['readmodel.state'], params)
         return result ? json_response(200, result) : json_response(404, {error: 'not found in read model'})
       rescue ApiError => ex
