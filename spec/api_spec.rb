@@ -66,5 +66,19 @@ describe EsReadModel::Api do
     end
   end
 
+  context 'when the handler adds links' do
+    let(:routes) { {
+      '/users' => Proc.new {|state, params| {xyz: :zy, _links: {a: 'b'} } }
+    } }
+
+    example 'the self link is merged with the existing links' do
+      links = JSON.parse(response[2][0], symbolize_names: true)[:_links]
+      expect(links.keys.length).to eq(2)
+      expect(links).to have_key(:self)
+      expect(links[:a]).to eq('b')
+    end
+
+  end
+
 end
 

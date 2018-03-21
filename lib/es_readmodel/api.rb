@@ -48,15 +48,19 @@ module EsReadModel
     end
 
     def json_response(status_code, body)
-      result = body.merge({
-        _links: { self: @request.fullpath }
-      })
+      if body.has_key?(:_links)
+        body[:_links][:self] = @request.fullpath
+      else
+        body = body.merge({
+          _links: { self: @request.fullpath }
+        })
+      end
       [
         status_code,
         {
           'Content-Type' => 'application/json'
         },
-        [result.to_json]
+        [body.to_json]
       ]
     end
 
