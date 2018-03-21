@@ -27,8 +27,9 @@ module EsReadModel
 
     def invoke_handler(handler, args, env)
       return json_response(503, {status: env['readmodel.status']}) unless env['readmodel.available'] == true
+      params = @request.params.merge(args)
       begin
-        result = handler.call(@request.env['readmodel.state'], @request.params.merge(args))
+        result = handler.call(@request.env['readmodel.state'], params)
         return result ? json_response(200, result) : json_response(404, {error: 'not found in read model'})
       rescue ApiError => ex
         return json_response(400, {
@@ -37,7 +38,8 @@ module EsReadModel
       rescue Exception => ex
         return json_response(500, {
           error: "#{ex.class.name}: #{ex.message}",
-          backtrace: ex.backtrace
+          backtrace: ex.backtrace,
+          params: params
         })
       end
     end
