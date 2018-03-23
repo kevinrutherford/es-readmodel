@@ -32,7 +32,7 @@ module EsReadModel
         payload = @request.body.read
         body = payload.empty? ? {} : JSON.parse(payload, symbolize_names: true)
         params = params.merge(body)
-        result = handler.call(@request.env['readmodel.state'], params)
+        result = handler.call(@request.env['readmodel.state'], params, env)
         return result ? json_response(200, result) : json_response(404, {error: 'not found in read model'})
       rescue ApiError => ex
         return json_response(400, {

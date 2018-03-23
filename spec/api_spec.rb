@@ -12,7 +12,7 @@ describe EsReadModel::Api do
 
   context 'when the path does not match any route' do
     let(:routes) { {
-      '/unused' => Proc.new {|state, params| raise ArgumentError, "boom!" }
+      '/unused' => Proc.new {|state, params, env| raise ArgumentError, "boom!" }
     } }
 
     it 'returns a 404 error' do
@@ -26,7 +26,7 @@ describe EsReadModel::Api do
 
   context 'when the route handler throws an API error' do
     let(:routes) { {
-      '/users' => Proc.new {|state, params| raise EsReadModel::ApiError, "boom!" }
+      '/users' => Proc.new {|state, params, env| raise EsReadModel::ApiError, "boom!" }
     } }
 
     it 'returns a 400 error' do
@@ -40,7 +40,7 @@ describe EsReadModel::Api do
 
   context 'when the route handler throws an exception' do
     let(:routes) { {
-      '/users' => Proc.new {|state, params| raise ArgumentError, "boom!" }
+      '/users' => Proc.new {|state, params, env| raise ArgumentError, "boom!" }
     } }
 
     it 'returns a 500 error' do
@@ -54,7 +54,7 @@ describe EsReadModel::Api do
 
   context 'when the route handler returns nil' do
     let(:routes) { {
-      '/users' => Proc.new {|state, params| nil }
+      '/users' => Proc.new {|state, params, env| nil }
     } }
 
     it 'returns a 404 error' do
@@ -68,7 +68,7 @@ describe EsReadModel::Api do
 
   context 'when the handler adds links' do
     let(:routes) { {
-      '/users' => Proc.new {|state, params| {xyz: :zy, _links: {a: 'b'} } }
+      '/users' => Proc.new {|state, params, env| {xyz: :zy, _links: {a: 'b'} } }
     } }
 
     example 'the self link is merged with the existing links' do
