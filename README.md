@@ -4,7 +4,7 @@ An opinionated read model framework for EventStore.
 
 Your reducer can be anything that responds to #call.
 It will receive two arguments -- the current state and the event.
-The current state will be nil if no events have bee processed yet.
+The current state will be nil if no events have been processed yet.
 The reducer function must return the new state.
 
 ## Routes
@@ -31,9 +31,8 @@ use Rack::Cors do
   end
 end
 
-use EsReadModel::Subscriber,
-  es_host:     ENV['ES_HOST'],
-  es_port:     ENV['ES_PORT'],
+use EsReadModel::RackSubscriber,
+  es_url:      'http://localhost:2113',
   es_username: ENV['ES_USERNAME'],
   es_password: ENV['ES_PASSWORD'],
   reducer:     ActiveUsers.new,
