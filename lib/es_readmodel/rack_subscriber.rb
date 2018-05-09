@@ -1,5 +1,6 @@
 require 'rack'
 require 'json'
+require_relative './subscriber'
 
 module EsReadModel
 
