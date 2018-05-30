@@ -62,7 +62,8 @@ module EsReadModel
             @listener.call({
               level: 'error',
               tag:   'reducer.error',
-              msg:   "Error in reducer: #{ex.class}: #{ex.message}. Read model state not updated."
+              msg:   "Error in reducer: #{ex.class}: #{ex.message}. Read model state not updated.",
+              event: evt.type
             })
           end
           @status[:eventsReceived] = @status[:eventsReceived] + 1
